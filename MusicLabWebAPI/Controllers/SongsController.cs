@@ -19,19 +19,26 @@ namespace MusicLabWebAPI.Controllers
         {
             _context = context;
         }
-            
+
         // GET: api/Songs
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult Get()
+            
         {
-            return new string[] { "value1", "value2" };
+            var songs = _context.Songs.ToList();
+            return StatusCode(200, songs);
         }
 
         // GET: api/Songs/5
         [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        public IActionResult Get(int id)
         {
-            return "value";
+            var song =_context.Songs.Find(id);
+            if(song == null)
+            {
+                return NotFound();
+            }
+            return StatusCode(200, song);
         }
 
         // POST: api/Songs
@@ -40,19 +47,38 @@ namespace MusicLabWebAPI.Controllers
         {
             _context.Songs.Add(song);
             _context.SaveChanges();
-            return StatusCode(201,song);
+            return StatusCode(201, song);
         }
 
         // PUT: api/Songs/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult Put([FromBody] Song song)
+            
         {
+            _context.Songs.Update(song);
+            _context.SaveChanges();
+            return StatusCode(200, song);
+                
         }
 
         // DELETE: api/Songs/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            var song = _context.Songs.Find(id);
+            _context.Songs.Remove(song);
+            _context.SaveChanges();
+
+            return NoContent();
+
         }
+            
+            
+
+            
+
+
+            
+        
     }
 }
